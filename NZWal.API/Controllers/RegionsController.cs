@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NZWal.API.Data;
 using NZWal.API.Models.Domain;
 using NZWal.API.Models.DTO;
+using NZWal.API.Repositories;
 
 namespace NZWal.API.Controllers
 {
@@ -10,19 +12,21 @@ namespace NZWal.API.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly NZWalDbContext dbContext;
+        private readonly IRegionRepository regionRepository;
 
-        public RegionsController(NZWalDbContext dbContext)
+        public RegionsController(NZWalDbContext dbContext, IRegionRepository regionRepository)
         {
             this.dbContext = dbContext;
+            this.regionRepository = regionRepository;
         }
 
         //GET ALL REGIONS
         //GET : https://localhost:portnumber/api/regions
         [HttpGet]
-        public IActionResult GetAllRegion()
+        public async Task<IActionResult> GetAllRegion()
         {
             //Get Data From Database - Domain models
-            var regionsDomain = dbContext.Regions.ToList();
+            var regionsDomain = await regionRepository.GetAllRegionsAsync();
 
             //Map Domain Models to DTOs
             var regionsDto = new List<RegionDto>();
@@ -44,11 +48,11 @@ namespace NZWal.API.Controllers
         //GET : https://localhost:portnumber/api/regions/{id}
         [HttpGet]
         [Route("{id}")]
-        public IActionResult GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             //var region = dbContext.Regions.Find(id);
             //Get Region Domain Model From Database
-            var regionDomain = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomain = await regionRepository.GetByIdAsync(id);
 
             if (regionDomain == null)
             {
@@ -72,7 +76,7 @@ namespace NZWal.API.Controllers
         //POST To Create New Region
         //POST: https://localhost:portnumber/api/region
         [HttpPost]
-        public IActionResult Create([FromBody] AddRegionRequestDto addRegionRequestDto)
+        public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map or Covert DTO to Domain Model
             var regionDomainModel = new Region
@@ -82,8 +86,7 @@ namespace NZWal.API.Controllers
                 RegionImageUrl = addRegionRequestDto.RegionImageUrl,
             };
             //Use Domain Model to create Region
-            dbContext.Regions.Add(regionDomainModel);
-            dbContext.SaveChanges();
+            regionDomainModel = await regionRepository.CreateAsync(regionDomainModel);
 
             //Map Domain Model back to Dto
             var regionDto = new RegionDto()
@@ -103,22 +106,22 @@ namespace NZWal.API.Controllers
         //Put: https://localhost:portnumber/api/region/{id}
         [HttpPut]
         [Route("{id:Guid}")]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
+            //Map DTO to Domain Model
+            var regionDomainModel = new Region
+            {
+                Code = updateRegionRequestDto.Code,
+                Name = updateRegionRequestDto.Name,
+                RegionImageUrl = updateRegionRequestDto.RegionImageUrl,
+            };
             //Check if region exits
-            var regionDomainModel = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
 
             if(regionDomainModel == null)
             {
                 return BadRequest("Không tìm thấy id");
             }
-
-            //Map DTO to Domain model
-            regionDomainModel.Code = updateRegionRequestDto.Code;
-            regionDomainModel.Name = updateRegionRequestDto.Name;
-            regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
-
-            dbContext.SaveChanges();
 
             //Convert Domain Model to DTO
             var regionDto = new RegionDto()
@@ -136,18 +139,14 @@ namespace NZWal.API.Controllers
         //Delete: https://localhost:portnumber/api/region/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
-        public IActionResult Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var regionDomainModel = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomainModel = await regionRepository.DeleteAsync(id);
 
             if(regionDomainModel == null)
             {
                 return BadRequest("Không tìm thấy id");
             }
-
-            //Delete Region
-            dbContext.Regions.Remove(regionDomainModel);
-            dbContext.SaveChanges();
 
             //return deleted Region back
             //map Domain Model to DTO
@@ -158,7 +157,6 @@ namespace NZWal.API.Controllers
                 Name = regionDomainModel.Name,
                 RegionImageUrl = regionDomainModel.RegionImageUrl,
             };
-
 
             return Ok();
         }
