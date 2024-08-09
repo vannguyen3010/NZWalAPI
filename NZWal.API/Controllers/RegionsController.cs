@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NZWal.API.Data;
+using NZWal.API.Models.Domain;
 using NZWal.API.Models.DTO;
 
 namespace NZWal.API.Controllers
@@ -43,7 +44,7 @@ namespace NZWal.API.Controllers
         //GET : https://localhost:portnumber/api/regions/{id}
         [HttpGet]
         [Route("{id}")]
-        public IActionResult GetById([FromRoute] Guid id) 
+        public IActionResult GetById([FromRoute] Guid id)
         {
             //var region = dbContext.Regions.Find(id);
             //Get Region Domain Model From Database
@@ -66,6 +67,36 @@ namespace NZWal.API.Controllers
 
             //Return DTO back to client
             return Ok(regionDto);
+        }
+
+        //POST To Create New Region
+        //POST: https://localhost:portnumber/api/region
+        [HttpPost]
+        public IActionResult Create([FromBody] AddRegionRequestDto addRegionRequestDto)
+        {
+            //Map or Covert DTO to Domain Model
+            var regionDomainModel = new Region
+            {
+                Code = addRegionRequestDto.Code,
+                Name = addRegionRequestDto.Name,
+                RegionImageUrl = addRegionRequestDto.RegionImageUrl,
+            };
+            //Use Domain Model to create Region
+            dbContext.Regions.Add(regionDomainModel);
+            dbContext.SaveChanges();
+
+            //Map Domain Model back to Dto
+            var regionDto = new RegionDto()
+            {
+                Id = regionDomainModel.Id,
+                Code = regionDomainModel.Code,
+                Name = regionDomainModel.Name,
+                RegionImageUrl = regionDomainModel.RegionImageUrl,
+            };
+
+            //CreatedAtAction một phương thức trả về HTTP status code 201 (Created)
+            return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+            //Phương thức này sử dụng nameof(GetById), để chỉ định rằng URL trả về sẽ trỏ đến hành động GetById (thường dùng để lấy chi tiết của Region theo ID).
         }
     }
 }
