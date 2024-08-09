@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NZWal.API.Data;
 using NZWal.API.Models.Domain;
@@ -13,11 +14,14 @@ namespace NZWal.API.Controllers
     {
         private readonly NZWalDbContext dbContext;
         private readonly IRegionRepository regionRepository;
+        private readonly IMapper mapper;
 
-        public RegionsController(NZWalDbContext dbContext, IRegionRepository regionRepository)
+        public RegionsController(NZWalDbContext dbContext, IRegionRepository regionRepository,
+            IMapper mapper)
         {
             this.dbContext = dbContext;
             this.regionRepository = regionRepository;
+            this.mapper = mapper;
         }
 
         //GET ALL REGIONS
@@ -28,26 +32,14 @@ namespace NZWal.API.Controllers
             //Get Data From Database - Domain models
             var regionsDomain = await regionRepository.GetAllRegionsAsync();
 
-            //Map Domain Models to DTOs
-            var regionsDto = new List<RegionDto>();
-            foreach (var item in regionsDomain)
-            {
-                regionsDto.Add(new RegionDto()
-                {
-                    Id = item.Id,
-                    Code = item.Code,
-                    Name = item.Name,
-                    RegionImageUrl = item.RegionImageUrl,
-                });
-            }
-
-            return Ok(regionsDto);
+            //return DTO
+            return Ok(mapper.Map<List<RegionDto>>(regionsDomain));
         }
 
         //GET SINGLE REGION (Get Resion By ID)
         //GET : https://localhost:portnumber/api/regions/{id}
         [HttpGet]
-        [Route("{id}")]
+        [Route("{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             //var region = dbContext.Regions.Find(id);
@@ -59,18 +51,8 @@ namespace NZWal.API.Controllers
                 return BadRequest("Không tìm thấy người dùng");
             }
 
-            // Map/Convert Region Domain Model to Region Dto
-
-            var regionDto = new RegionDto()
-            {
-                Id = regionDomain.Id,
-                Code = regionDomain.Code,
-                Name = regionDomain.Name,
-                RegionImageUrl = regionDomain.RegionImageUrl,
-            };
-
             //Return DTO back to client
-            return Ok(regionDto);
+            return Ok(mapper.Map<RegionDto>(regionDomain));
         }
 
         //POST To Create New Region
@@ -79,23 +61,12 @@ namespace NZWal.API.Controllers
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map or Covert DTO to Domain Model
-            var regionDomainModel = new Region
-            {
-                Code = addRegionRequestDto.Code,
-                Name = addRegionRequestDto.Name,
-                RegionImageUrl = addRegionRequestDto.RegionImageUrl,
-            };
+            var regionDomainModel = mapper.Map<Region>(addRegionRequestDto);
             //Use Domain Model to create Region
             regionDomainModel = await regionRepository.CreateAsync(regionDomainModel);
 
             //Map Domain Model back to Dto
-            var regionDto = new RegionDto()
-            {
-                Id = regionDomainModel.Id,
-                Code = regionDomainModel.Code,
-                Name = regionDomainModel.Name,
-                RegionImageUrl = regionDomainModel.RegionImageUrl,
-            };
+            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
 
             //CreatedAtAction một phương thức trả về HTTP status code 201 (Created)
             return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
@@ -109,12 +80,8 @@ namespace NZWal.API.Controllers
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             //Map DTO to Domain Model
-            var regionDomainModel = new Region
-            {
-                Code = updateRegionRequestDto.Code,
-                Name = updateRegionRequestDto.Name,
-                RegionImageUrl = updateRegionRequestDto.RegionImageUrl,
-            };
+            var regionDomainModel = mapper.Map<Region>(updateRegionRequestDto);
+
             //Check if region exits
             regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
 
@@ -124,13 +91,7 @@ namespace NZWal.API.Controllers
             }
 
             //Convert Domain Model to DTO
-            var regionDto = new RegionDto()
-            {
-                Id = regionDomainModel.Id,
-                Code = regionDomainModel.Code,
-                Name = regionDomainModel.Name,
-                RegionImageUrl = regionDomainModel.RegionImageUrl,
-            };
+            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
 
             return Ok(regionDto);
         }
@@ -150,15 +111,8 @@ namespace NZWal.API.Controllers
 
             //return deleted Region back
             //map Domain Model to DTO
-            var regionDto = new RegionDto()
-            {
-                Id = regionDomainModel.Id,
-                Code = regionDomainModel.Code,
-                Name = regionDomainModel.Name,
-                RegionImageUrl = regionDomainModel.RegionImageUrl,
-            };
-
-            return Ok();
+            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
+            return Ok(regionDto);
         }
     }
 }
