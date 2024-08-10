@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NZWal.API.CustomActionFilter;
 using NZWal.API.Data;
 using NZWal.API.Models.Domain;
 using NZWal.API.Models.DTO;
@@ -26,7 +27,7 @@ namespace NZWal.API.Controllers
 
         //GET ALL REGIONS
         //GET : https://localhost:portnumber/api/regions
-        [HttpGet]
+        [HttpGet("GetAllRegions")]
         public async Task<IActionResult> GetAllRegion()
         {
             //Get Data From Database - Domain models
@@ -39,7 +40,7 @@ namespace NZWal.API.Controllers
         //GET SINGLE REGION (Get Resion By ID)
         //GET : https://localhost:portnumber/api/regions/{id}
         [HttpGet]
-        [Route("{id:Guid}")]
+        [Route("GetById/{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             //var region = dbContext.Regions.Find(id);
@@ -57,7 +58,8 @@ namespace NZWal.API.Controllers
 
         //POST To Create New Region
         //POST: https://localhost:portnumber/api/region
-        [HttpPost]
+        [HttpPost("CreateRegion")]
+        [ValidateModel] //Kiểm tra validate model (ValidateModelAttribute)
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map or Covert DTO to Domain Model
@@ -76,7 +78,8 @@ namespace NZWal.API.Controllers
         //Update Region
         //Put: https://localhost:portnumber/api/region/{id}
         [HttpPut]
-        [Route("{id:Guid}")]
+        [Route("UpdateRegion/{id:Guid}")]
+        [ValidateModel] //Kiểm tra validate model (ValidateModelAttribute)
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             //Map DTO to Domain Model
@@ -85,7 +88,7 @@ namespace NZWal.API.Controllers
             //Check if region exits
             regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
 
-            if(regionDomainModel == null)
+            if (regionDomainModel == null)
             {
                 return BadRequest("Không tìm thấy id");
             }
@@ -99,7 +102,7 @@ namespace NZWal.API.Controllers
         //Delete Region
         //Delete: https://localhost:portnumber/api/region/{id}
         [HttpDelete]
-        [Route("{id:Guid}")]
+        [Route("DeleteRegion/{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var regionDomainModel = await regionRepository.DeleteAsync(id);

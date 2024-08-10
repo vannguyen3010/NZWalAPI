@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NZWal.API.CustomActionFilter;
 using NZWal.API.Models.Domain;
 using NZWal.API.Models.DTO;
 using NZWal.API.Repositories;
@@ -23,6 +24,7 @@ namespace NZWal.API.Controllers
         //CREATE Walk
         //POST: api/Walks/CreateWalks
         [HttpPost("CreateWalk")]
+        [ValidateModel] //Kiểm tra validate model (ValidateModelAttribute)
         public async Task<IActionResult> CreateWalk([FromBody] AddWalkRequestDto addWalkRequestDto)
         {
             //Map DTO to Domain Model
@@ -33,6 +35,7 @@ namespace NZWal.API.Controllers
 
             //Map Domain model to DTO
             return Ok(mapper.Map<WalkDto>(walkDomainModel));
+
         }
 
         //GET Walk
@@ -68,6 +71,7 @@ namespace NZWal.API.Controllers
         //PUT: api/Walks/UpdateWalk/{id}
         [HttpPut]
         [Route("UpdateWalk/{id:Guid}")]
+        [ValidateModel] //Kiểm tra validate model (ValidateModelAttribute)
         public async Task<IActionResult> UpdateWalk([FromRoute] Guid id, UpdateWalkRequestDto updateWalkRequestDto)
         {
             //Map DTO to Domain model
@@ -75,7 +79,7 @@ namespace NZWal.API.Controllers
 
             walkDomainModel = await walkRepository.UpdateWalkAsync(id, walkDomainModel);
 
-            if(walkDomainModel == null)
+            if (walkDomainModel == null)
             {
                 return BadRequest("Không tìm thấy id người dùng");
             }
