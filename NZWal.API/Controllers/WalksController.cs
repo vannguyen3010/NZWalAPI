@@ -44,10 +44,10 @@ namespace NZWal.API.Controllers
         public async Task<IActionResult> GetAllWalks()
         {
             //Get Data From Database - Domain models
-            var walksDomain = await walkRepository.GetAllWalksAsync();
+            var walksDomainModel = await walkRepository.GetAllWalksAsync();
 
             //Map Domain Model to Dto
-            return Ok(mapper.Map<List<WalkDto>>(walksDomain));
+            return Ok(mapper.Map<List<WalkDto>>(walksDomainModel));
         }
 
         //GET Single

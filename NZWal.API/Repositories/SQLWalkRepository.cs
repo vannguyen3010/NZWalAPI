@@ -42,9 +42,9 @@ namespace NZWal.API.Repositories
             res.Name = model.Name;
             res.Description = model.Description;
             res.LengthInKm = model.LengthInKm;
-            res.WalkImgeUrl = model.WalkImgeUrl;
+            res.WalkImageUrl = model.WalkImageUrl;
             res.RegionId = model.RegionId;
-            res.DiffucultyId = model.DiffucultyId;
+            res.DifficultyId = model.DifficultyId;
 
             await dbContext.SaveChangesAsync();
             return res;
