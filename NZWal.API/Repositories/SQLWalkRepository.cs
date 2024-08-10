@@ -19,10 +19,26 @@ namespace NZWal.API.Repositories
             return model;
         }
 
-        public async Task<List<Walk>> GetAllWalksAsync()
+        public async Task<List<Walk>> GetAllWalksAsync(string? filterOn, string? filterQuery = null)
         {
+            var walks = dbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
+            // AsQueryable mở rộng thêm các điều kiện lọc, sắp xếp hoặc các thao tác khác
+
+            //Filter/Tìm kiếm
+
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                //Kiểm tra nó có bằng Name hay không  (không phân biệt chữ hoa chữ thường)
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = walks.Where(x => x.Name.Contains(filterQuery));
+                }
+            }
+
+            return await walks.ToListAsync();
             //Lấy Csdl bảng Walks và 2 bảng Difficulty, Region
-            return await dbContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
+            //return await dbContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
+
         }
 
         public async Task<Walk?> GetWalkByIdAsync(Guid id)
