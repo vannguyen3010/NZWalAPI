@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NZWal.API.Data;
 
@@ -11,9 +12,11 @@ using NZWal.API.Data;
 namespace NZWal.API.Migrations
 {
     [DbContext(typeof(NZWalDbContext))]
-    partial class NZWalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240810184355_Fix WalkImageUrl")]
+    partial class FixWalkImageUrl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,6 +131,9 @@ namespace NZWal.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("DifficultyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DiffucultyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("LengthInKm")
