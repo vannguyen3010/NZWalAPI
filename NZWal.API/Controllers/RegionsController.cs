@@ -109,10 +109,8 @@ namespace NZWal.API.Controllers
                 return BadRequest("Không tìm thấy id");
             }
 
-            //return deleted Region back
             //map Domain Model to DTO
-            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
-            return Ok(regionDto);
+            return Ok(mapper.Map<RegionDto>(regionDomainModel));
         }
     }
 }

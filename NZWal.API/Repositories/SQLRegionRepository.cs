@@ -17,16 +17,19 @@ namespace NZWal.API.Repositories
         {
             return await dbContext.Regions.ToListAsync();
         }
+
         public async Task<Region?> GetByIdAsync(Guid id)
         {
             return await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
         }
+
         public async Task<Region?> CreateAsync(Region model)
         {
             await dbContext.Regions.AddAsync(model);
             await dbContext.SaveChangesAsync();
             return model;
         }
+
         public async Task<Region?> UpdateAsync(Guid id, Region model)
         {
             var res = await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);

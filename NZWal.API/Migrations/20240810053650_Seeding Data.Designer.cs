@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NZWal.API.Data;
 
@@ -11,9 +12,11 @@ using NZWal.API.Data;
 namespace NZWal.API.Migrations
 {
     [DbContext(typeof(NZWalDbContext))]
-    partial class NZWalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240810053650_Seeding Data")]
+    partial class SeedingData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,17 +42,17 @@ namespace NZWal.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("54466f17-02af-48e7-8ed3-5a4a8bfacf6f"),
+                            Id = new Guid("026a6f1e-3d0d-4b74-8c32-1f2bac5db8d6"),
                             Name = "Easy"
                         },
                         new
                         {
-                            Id = new Guid("ea294873-7a8c-4c0f-bfa7-a2eb492cbf8c"),
+                            Id = new Guid("a1f90e05-4abd-4761-9b66-4bd48d55bd4d"),
                             Name = "Medium"
                         },
                         new
                         {
-                            Id = new Guid("f808ddcd-b5e5-4d80-b732-1ca523e48434"),
+                            Id = new Guid("779de2da-f578-4573-8bde-14175cf7b17e"),
                             Name = "Hard"
                         });
                 });
@@ -78,42 +81,29 @@ namespace NZWal.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f7248fc3-2585-4efb-8d1d-1c555f4087f6"),
+                            Id = new Guid("bdebbae5-d2dc-4ce5-bc22-235b208aa162"),
                             Code = "AKL",
                             Name = "Auckland",
                             RegionImageUrl = "https://images.pexels.com/photos/5169056/pexels-photo-5169056.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                         },
                         new
                         {
-                            Id = new Guid("6884f7d7-ad1f-4101-8df3-7a6fa7387d81"),
+                            Id = new Guid("b7afc251-4a50-4bde-a000-7e0b4a8bf1f0"),
                             Code = "NTL",
                             Name = "Northland"
                         },
                         new
                         {
-                            Id = new Guid("14ceba71-4b51-4777-9b17-46602cf66153"),
+                            Id = new Guid("e3df00fd-62bd-482a-a94a-db3308eb7d0f"),
                             Code = "BOP",
                             Name = "Bay Of Plenty"
                         },
                         new
                         {
-                            Id = new Guid("cfa06ed2-bf65-4b65-93ed-c9d286ddb0de"),
+                            Id = new Guid("597e2399-58d2-46a8-8e58-5e7d9bada3fa"),
                             Code = "WGN",
                             Name = "Wellington",
                             RegionImageUrl = "https://images.pexels.com/photos/4350631/pexels-photo-4350631.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                        },
-                        new
-                        {
-                            Id = new Guid("906cb139-415a-4bbb-a174-1a1faf9fb1f6"),
-                            Code = "NSN",
-                            Name = "Nelson",
-                            RegionImageUrl = "https://images.pexels.com/photos/13918194/pexels-photo-13918194.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                        },
-                        new
-                        {
-                            Id = new Guid("f077a22e-4248-4bf6-b564-c7cf4e250263"),
-                            Code = "STL",
-                            Name = "Southland"
                         });
                 });
 
