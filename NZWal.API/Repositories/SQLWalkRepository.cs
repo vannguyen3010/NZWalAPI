@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NZWal.API.Data;
 using NZWal.API.Models.Domain;
+using System.Security.Cryptography;
 
 namespace NZWal.API.Repositories
 {
@@ -19,21 +20,37 @@ namespace NZWal.API.Repositories
             return model;
         }
 
-        public async Task<List<Walk>> GetAllWalksAsync(string? filterOn, string? filterQuery = null)
+        public async Task<List<Walk>> GetAllWalksAsync(string? filterOn, string? filterQuery = null, string? sortBy = null, bool isAscending = true)
         {
             var walks = dbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
             // AsQueryable mở rộng thêm các điều kiện lọc, sắp xếp hoặc các thao tác khác
 
             //Filter/Tìm kiếm
-
-            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false) // Kiểm tra 2 chuỗi không phải null
             {
-                //Kiểm tra nó có bằng Name hay không  (không phân biệt chữ hoa chữ thường)
+                //Kiểm tra nó có bằng Name hay không (không phân biệt chữ hoa chữ thường)
                 if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
                 {
                     walks = walks.Where(x => x.Name.Contains(filterQuery));
                 }
             }
+
+            //Sorting/Sắp xếp
+            if(string.IsNullOrWhiteSpace(sortBy) == false)//Kiểm tra chuỗi không phải là null
+            {
+                if(sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(x => x.Name): walks.OrderByDescending(x => x.Name);
+                    //Nếu isAscending là true, danh sách walks sẽ được sắp xếp theo thứ tự tăng dần (OrderBy) dựa trên thuộc tính Name.
+                    //Nếu isAscending là false, danh sách walks sẽ được sắp xếp theo thứ tự giảm dần(OrderByDescending) dựa trên thuộc tính Name.
+                }
+                else if(sortBy.Equals("Lenghth", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(x => x.LengthInKm) : walks.OrderByDescending(x => x.LengthInKm);
+                }
+            }
+           
+
 
             return await walks.ToListAsync();
             //Lấy Csdl bảng Walks và 2 bảng Difficulty, Region
