@@ -20,7 +20,7 @@ namespace NZWal.API.Repositories
             return model;
         }
 
-        public async Task<List<Walk>> GetAllWalksAsync(string? filterOn, string? filterQuery = null, string? sortBy = null, bool isAscending = true)
+        public async Task<List<Walk>> GetAllWalksAsync(string? filterOn, string? filterQuery = null, string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
         {
             var walks = dbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
             // AsQueryable mở rộng thêm các điều kiện lọc, sắp xếp hoặc các thao tác khác
@@ -50,9 +50,10 @@ namespace NZWal.API.Repositories
                 }
             }
            
+            //Pagination/ Phân trang
+            var skipResults = (pageNumber - 1) * pageSize;
 
-
-            return await walks.ToListAsync();
+            return await walks.Skip(skipResults).Take(pageSize).ToListAsync();
             //Lấy Csdl bảng Walks và 2 bảng Difficulty, Region
             //return await dbContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
 
