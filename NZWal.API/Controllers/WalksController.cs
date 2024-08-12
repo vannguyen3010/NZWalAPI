@@ -21,6 +21,7 @@ namespace NZWal.API.Controllers
             this.walkRepository = walkRepository;
         }
 
+        #region CreateWalk
         //CREATE Walk
         //POST: api/Walks/CreateWalks
         [HttpPost("CreateWalk")]
@@ -37,11 +38,13 @@ namespace NZWal.API.Controllers
             return Ok(mapper.Map<WalkDto>(walkDomainModel));
 
         }
+        #endregion
 
+        #region GetAllWalks
         //GET Walk
         //GET: api/Walks/GetAllWalks?filterOn=Name&filterQuery=Track&sortBy=Name&isAscending=true&pageNumber=1&pageSize=10
         [HttpGet("GetAllWalks")]
-        public async Task<IActionResult> GetAllWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery, 
+        public async Task<IActionResult> GetAllWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
             [FromQuery] string? sortBy, [FromQuery] bool? isAscending,
             [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
@@ -52,7 +55,9 @@ namespace NZWal.API.Controllers
             //Map Domain Model to Dto
             return Ok(mapper.Map<List<WalkDto>>(walksDomainModel));
         }
+        #endregion
 
+        #region GetWalkById
         //GET Single
         //GET: api/Walks/GetWalkById/{id}
         [HttpGet]
@@ -69,7 +74,9 @@ namespace NZWal.API.Controllers
             //Map Domain model to DTO
             return Ok(mapper.Map<WalkDto>(walksDomainModel));
         }
+        #endregion
 
+        #region UpdateWalk
         //Update Walk id
         //PUT: api/Walks/UpdateWalk/{id}
         [HttpPut]
@@ -90,7 +97,9 @@ namespace NZWal.API.Controllers
             //Map Domain model to DTO
             return Ok(mapper.Map<WalkDto>(walkDomainModel));
         }
+        #endregion
 
+        #region DeleteWalk
         //Delete Walk id
         //DELETE: api/Walks/DeleteWalk/{id}
         [HttpDelete]
@@ -98,7 +107,7 @@ namespace NZWal.API.Controllers
         public async Task<IActionResult> DeleteWalk(Guid id)
         {
             var walkDomainModel = await walkRepository.DeleteWalkAsync(id);
-            if(walkDomainModel == null)
+            if (walkDomainModel == null)
             {
                 return BadRequest("Không tìm thấy id người dùng!!");
             }
@@ -106,5 +115,7 @@ namespace NZWal.API.Controllers
             //Map Domain model to DTO
             return Ok(mapper.Map<WalkDto>(walkDomainModel));
         }
+        #endregion
+
     }
 }

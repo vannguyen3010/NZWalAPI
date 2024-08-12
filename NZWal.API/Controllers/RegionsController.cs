@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NZWal.API.CustomActionFilter;
@@ -11,6 +12,7 @@ namespace NZWal.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly NZWalDbContext dbContext;
@@ -25,6 +27,7 @@ namespace NZWal.API.Controllers
             this.mapper = mapper;
         }
 
+        #region GetAllRegions
         //GET ALL REGIONS
         //GET : https://localhost:portnumber/api/regions
         [HttpGet("GetAllRegions")]
@@ -36,7 +39,9 @@ namespace NZWal.API.Controllers
             //return DTO
             return Ok(mapper.Map<List<RegionDto>>(regionsDomain));
         }
+        #endregion
 
+        #region GetByid
         //GET SINGLE REGION (Get Resion By ID)
         //GET : https://localhost:portnumber/api/regions/{id}
         [HttpGet]
@@ -55,6 +60,9 @@ namespace NZWal.API.Controllers
             //Return DTO back to client
             return Ok(mapper.Map<RegionDto>(regionDomain));
         }
+        #endregion
+
+        #region CreateRegion
 
         //POST To Create New Region
         //POST: https://localhost:portnumber/api/region
@@ -75,6 +83,9 @@ namespace NZWal.API.Controllers
             //Phương thức này sử dụng nameof(GetById), để chỉ định rằng URL trả về sẽ trỏ đến hành động GetById (thường dùng để lấy chi tiết của Region theo ID).
         }
 
+        #endregion
+
+        #region UpdateRegion
         //Update Region
         //Put: https://localhost:portnumber/api/region/{id}
         [HttpPut]
@@ -98,7 +109,9 @@ namespace NZWal.API.Controllers
 
             return Ok(regionDto);
         }
+        #endregion
 
+        #region DeleteRegion
         //Delete Region
         //Delete: https://localhost:portnumber/api/region/{id}
         [HttpDelete]
@@ -107,7 +120,7 @@ namespace NZWal.API.Controllers
         {
             var regionDomainModel = await regionRepository.DeleteAsync(id);
 
-            if(regionDomainModel == null)
+            if (regionDomainModel == null)
             {
                 return BadRequest("Không tìm thấy id");
             }
@@ -115,5 +128,7 @@ namespace NZWal.API.Controllers
             //map Domain Model to DTO
             return Ok(mapper.Map<RegionDto>(regionDomainModel));
         }
+        #endregion
+
     }
 }
