@@ -5,7 +5,7 @@ namespace NZWal.API.Data
 {
     public class NZWalDbContext: DbContext
     {
-        public NZWalDbContext(DbContextOptions dbContextOptions): base(dbContextOptions)
+        public NZWalDbContext(DbContextOptions<NZWalDbContext> dbContextOptions): base(dbContextOptions)
         {
             
         }
