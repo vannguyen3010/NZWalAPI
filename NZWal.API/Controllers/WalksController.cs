@@ -5,6 +5,7 @@ using NZWal.API.CustomActionFilter;
 using NZWal.API.Models.Domain;
 using NZWal.API.Models.DTO;
 using NZWal.API.Repositories;
+using System.Net;
 
 namespace NZWal.API.Controllers
 {
@@ -51,6 +52,9 @@ namespace NZWal.API.Controllers
             //Get Data From Database - Domain models
             //sortBy: Sắp xếp, isAscending : Giá trị tăng dần 
             var walksDomainModel = await walkRepository.GetAllWalksAsync(filterOn, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize);
+
+            //Create an exception
+            throw new Exception("This is a new exception");
 
             //Map Domain Model to Dto
             return Ok(mapper.Map<List<WalkDto>>(walksDomainModel));

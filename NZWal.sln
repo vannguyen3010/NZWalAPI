@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NZWal.API", "NZWal.API\NZWal.API.csproj", "{85A98324-6B4F-4F4F-AF25-67B8EDE5DC88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NZWal.API", "NZWal.API\NZWal.API.csproj", "{85A98324-6B4F-4F4F-AF25-67B8EDE5DC88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
