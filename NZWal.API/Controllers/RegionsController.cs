@@ -7,6 +7,7 @@ using NZWal.API.Data;
 using NZWal.API.Models.Domain;
 using NZWal.API.Models.DTO;
 using NZWal.API.Repositories;
+using System.Text.Json;
 
 namespace NZWal.API.Controllers
 {
@@ -17,27 +18,30 @@ namespace NZWal.API.Controllers
         private readonly NZWalDbContext dbContext;
         private readonly IRegionRepository regionRepository;
         private readonly IMapper mapper;
+        private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(NZWalDbContext dbContext, IRegionRepository regionRepository,
-            IMapper mapper)
+        public RegionsController(NZWalDbContext dbContext, IRegionRepository regionRepository,IMapper mapper, ILogger<RegionsController> logger)
         {
             this.dbContext = dbContext;
             this.regionRepository = regionRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         #region GetAllRegions
         //GET ALL REGIONS
         //GET : https://localhost:portnumber/api/regions
         [HttpGet("GetAllRegions")]
-        [Authorize(Roles = "Reader")]
+        //[Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAllRegion()
         {
             //Get Data From Database - Domain models
             var regionsDomain = await regionRepository.GetAllRegionsAsync();
 
-            //return DTO
+            //return DTOs
+
             return Ok(mapper.Map<List<RegionDto>>(regionsDomain));
+
         }
         #endregion
 
@@ -46,7 +50,7 @@ namespace NZWal.API.Controllers
         //GET : https://localhost:portnumber/api/regions/{id}
         [HttpGet]
         [Route("GetById/{id:Guid}")]
-        [Authorize(Roles = "Reader")]
+        //[Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             //var region = dbContext.Regions.Find(id);
@@ -69,7 +73,7 @@ namespace NZWal.API.Controllers
         //POST: https://localhost:portnumber/api/region
         [HttpPost("CreateRegion")]
         [ValidateModel] //Kiểm tra validate model (ValidateModelAttribute)
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map or Covert DTO to Domain Model
@@ -93,7 +97,7 @@ namespace NZWal.API.Controllers
         [HttpPut]
         [Route("UpdateRegion/{id:Guid}")]
         [ValidateModel] //Kiểm tra validate model (ValidateModelAttribute)
-        [Authorize(Roles = "Writer")]
+        //[Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             //Map DTO to Domain Model
@@ -119,7 +123,7 @@ namespace NZWal.API.Controllers
         //Delete: https://localhost:portnumber/api/region/{id}
         [HttpDelete]
         [Route("DeleteRegion/{id:Guid}")]
-        [Authorize(Roles = "Writer,Reader")]
+        //[Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var regionDomainModel = await regionRepository.DeleteAsync(id);
